@@ -51,16 +51,6 @@ exports.getSingleOrder = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-//get logged in user Orders
-exports.myOrders = catchAsyncErrors(async (req, res, next) => {
-  const orders = await Order.find({ user: req.user._id });
-
-  res.status(200).json({
-    success: true,
-    orders,
-  });
-});
-
 //get all orders -- admin
 
 exports.getAllOrders = catchAsyncErrors(async (req, res, next) => {
@@ -105,16 +95,6 @@ exports.updateOrder = catchAsyncErrors(async (req, res, next) => {
     success: true,
   });
 });
-
-async function updateStock(id, quantity) {
-  const product = await Product.findById(id);
-
-  product.stock -= quantity;
-
-  await product.save({
-    validateBeforeSave: false,
-  });
-}
 
 //delete order --admin
 
