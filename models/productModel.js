@@ -20,10 +20,13 @@ const productSchema = new mongoose.Schema({
     default: 0,
   },
   images: {},
-  category: {
-    type: String,
-    required: [true, 'Please Enter Product Category'],
-  },
+  category: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Category',
+      required: true,
+    },
+  ],
   stock: {
     type: Number,
     required: [true, 'Please enter product Stock'],

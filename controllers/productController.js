@@ -3,6 +3,7 @@ const ErrorHandler = require('../utils/errorhandler');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const ApiFeatures = require('../utils/apifeatures');
 const path = require('path');
+const Category = require('../models/categoryModel');
 const fs = require('fs');
 const { MongoClient, ObjectId } = require('mongodb');
 
@@ -74,10 +75,13 @@ exports.createProduct = catchAsyncErrors(async (req, res, next) => {
       return acc;
     }, {});
 
-    const productInfo = Object.assign({}, obj, { images: images });
+    let productInfo = Object.assign({}, obj, { images: images });
+    productInfo.category = Array.from(
+      new Set(JSON.parse(productInfo.category))
+    );
 
-    const product = await Product.create(productInfo);
-
+    let product = await Product.create(productInfo);
+    product = await product.populate('category');
     res.status(201).json({
       success: true,
       product,
@@ -93,7 +97,14 @@ exports.getAllProducts = catchAsyncErrors(async (req, res) => {
 
   const productCount = await Product.countDocuments();
 
-  const apiFeature = new ApiFeatures(Product.find(), req.query)
+  const apiFeature = new ApiFeatures(
+    Product.find().populate({
+      path: 'category',
+      model: 'Category',
+      options: { strictPopulate: false },
+    }),
+    req.query
+  )
     .search()
     .filter()
     .pagination(resultPerPage);
@@ -126,7 +137,7 @@ exports.updateProduct = catchAsyncErrors(async (req, res, next) => {
 // Get Product Details
 
 exports.getProductDetails = catchAsyncErrors(async (req, res, next) => {
-  const product = await Product.findById(req.params.id);
+  const product = await Product.findById(req.params.id).populate('category');
 
   if (!product) {
     return next(new ErrorHandler('Product Not Found', 404));
