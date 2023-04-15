@@ -6,3 +6,4 @@ API/
 **/TempImages
 *.env
 *.sh            
+**/uploads
