@@ -4,22 +4,22 @@ const {
   getAllCategories,
   updateCategory,
   deleteCategory,
+  getSingleCategory,
 } = require('../controllers/categoryController');
 
 const router = express.Router();
 const { isAuthenticatedUser, authorizeRoles } = require('../middleware/auth');
 
 router
-  .route('/admin/category/new')
+  .route('/admin/categories/new')
   .post(isAuthenticatedUser, authorizeRoles('admin'), newCategory);
 router
-  .route('/admin/category/:id')
+  .route('/admin/categories/:id')
   .put(isAuthenticatedUser, authorizeRoles('admin'), updateCategory);
+router.route('/categories/:id').get(getSingleCategory);
 router
   .route('/admin/category/remove/:id')
   .delete(isAuthenticatedUser, authorizeRoles('admin'), deleteCategory);
-router
-  .route('/categories')
-  .get(isAuthenticatedUser, authorizeRoles('admin'), getAllCategories);
+router.route('/categories').get(getAllCategories);
 
 module.exports = router;

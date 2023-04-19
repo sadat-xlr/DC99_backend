@@ -3,6 +3,7 @@ const Product = require('../models/productModel');
 const ErrorHandler = require('../utils/errorhandler');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 
+const ApiFeatures = require('../utils/apifeatures');
 //Create new category
 exports.newCategory = catchAsyncErrors(async (req, res, next) => {
   const { name, description } = req.body;
@@ -21,30 +22,42 @@ exports.newCategory = catchAsyncErrors(async (req, res, next) => {
 
 //get single order
 
-exports.getSingleOrder = catchAsyncErrors(async (req, res, next) => {
-  const order = await Order.findById(req.params.id).populate(
-    'user',
-    'name email'
-  );
+exports.getSingleCategory = catchAsyncErrors(async (req, res, next) => {
+  const category = await Category.findById(req.params.id);
 
-  if (!order) {
-    next(new ErrorHandler('Order not found with id ', 404));
+  if (!category) {
+    next(new ErrorHandler('Category not found with id ', 404));
   }
 
   res.status(200).json({
     success: true,
-    order,
+    data: category,
   });
 });
 
-//get all orders -- admin
+//get all categories -- admin
 
 exports.getAllCategories = catchAsyncErrors(async (req, res, next) => {
-  const categories = await Category.find();
+  const resultPerPage = 100;
+
+  const categoriesCount = await Category.countDocuments();
+
+  const apiFeature = new ApiFeatures(Category.find(), req.query)
+    .search()
+    .filter()
+    .pagination(resultPerPage);
+
+  const categories = await apiFeature.query;
+  console.log('categories sent');
+  // const startIndex = (req.query._start || 0) * 1;
+  // const endIndex = (req.query._end || startIndex + 9) * 1;
+  // const totalCount = products.length;
+  // const slicedPosts = products.slice(startIndex, endIndex);
+  res.setHeader('Access-Control-Expose-Headers', 'X-Total-Count');
+  res.setHeader('X-Total-Count', `1-20/${categoriesCount}`);
 
   res.status(200).json({
-    success: true,
-    categories,
+    data: categories,
   });
 });
 

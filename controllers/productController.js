@@ -93,7 +93,7 @@ exports.createProduct = catchAsyncErrors(async (req, res, next) => {
 
 // Get all Products
 exports.getAllProducts = catchAsyncErrors(async (req, res) => {
-  const resultPerPage = 8;
+  const resultPerPage = 100;
 
   const productCount = await Product.countDocuments();
 
@@ -110,7 +110,17 @@ exports.getAllProducts = catchAsyncErrors(async (req, res) => {
     .pagination(resultPerPage);
 
   const products = await apiFeature.query;
-  res.status(200).json({ success: true, products, productCount });
+  console.log('products sent');
+  console.log(req.query);
+  console.log(req.params);
+  // const startIndex = (req.query._start || 0) * 1;
+  // const endIndex = (req.query._end || startIndex + 9) * 1;
+  // const totalCount = products.length;
+  // const slicedPosts = products.slice(startIndex, endIndex);
+  res.setHeader('Access-Control-Expose-Headers', 'Content-Range');
+  res.setHeader('Content-Range', `1-20/20`);
+
+  res.status(200).json({ data: Array.from(products), total: productCount });
 });
 
 //Update product -- Admin
