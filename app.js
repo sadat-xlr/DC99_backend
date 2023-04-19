@@ -25,7 +25,7 @@ app.use(bodyParser.json());
 
 // Add a proxy to bypass CORS restrictions
 app.use(
-  '/api/v1/login',
+  '/login',
   createProxyMiddleware({
     target: 'http://localhost:4000/api/v1/login',
     changeOrigin: true,
