@@ -20,22 +20,22 @@ router.route('/products').get(getAllProducts);
 //   .route('/admin/product/images/upload')
 //  .post(isAuthenticatedUser, authorizeRoles('admin'), uploadFiles);
 router
-  .route('/admin/product/new')
+  .route('/admin/products/new')
   .post(isAuthenticatedUser, authorizeRoles('admin'), createProduct);
 
 router
-  .route('/admin/product/:id/remove/:imageid')
+  .route('/admin/products/:id/remove/:imageid')
   .post(isAuthenticatedUser, authorizeRoles('admin'), deleteImage);
 
 router
-  .route('/admin/product/:id/uploadimages')
+  .route('/admin/products/:id/uploadimages')
   .post(isAuthenticatedUser, authorizeRoles('admin'), uploadMultipleImages);
 
 router
-  .route('/admin/product/:id')
+  .route('/admin/products/:id')
   .put(isAuthenticatedUser, authorizeRoles('admin'), updateProduct)
   .delete(isAuthenticatedUser, authorizeRoles('admin'), deleteProduct);
 
-router.route('/product/:id').get(getProductDetails);
+router.route('/products/:id').get(getProductDetails);
 router.route('/images/:id').get(loadimage);
 module.exports = router;
